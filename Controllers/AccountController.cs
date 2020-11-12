@@ -17,6 +17,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.WebUtilities;
+using NETCore.MailKit.Core;
 
 namespace TestWebApi.Controllers
 {
@@ -27,13 +28,17 @@ namespace TestWebApi.Controllers
     {
         private readonly UserManager<StudentUser> _userManager;
         private readonly SignInManager<StudentUser> _signInManager;
+        private readonly IEmailService _emailServices;
         private readonly JwtBearerTokenSettings _jwtBearerTokenSettings;
 
-        public AccountController(IOptions<JwtBearerTokenSettings> jwtTokenOptions,UserManager<StudentUser> userManager, SignInManager<StudentUser> signInManager)
+
+        public AccountController(IOptions<JwtBearerTokenSettings> jwtTokenOptions,UserManager<StudentUser> userManager, 
+            SignInManager<StudentUser> signInManager, IEmailService emailService)
         {
             _userManager = userManager;
             _jwtBearerTokenSettings = jwtTokenOptions.Value;
             _signInManager = signInManager;
+            _emailServices = emailService;
         }
 
         [HttpPost("registration")]
@@ -60,7 +65,36 @@ namespace TestWebApi.Controllers
                 return new BadRequestObjectResult(new { Message = "User Registration Failed", Errors = dictionary });
             }
 
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            var callbackUrl = Url.Action("EmailConfirm", "Account", 
+                new { userId = user.Id,code = code},
+                protocol: Request.Scheme);
+
+            await _emailServices.SendAsync("test@test.com", "Confirm your email",
+                $"Please confirm your account by <a href='{callbackUrl}'>clicking here</a>.", true);
+
             return Ok(new { Message = "User Registration Successful" });
+        }
+
+        public async Task<IActionResult> EmailConfirm(string userId, string code) 
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null) 
+            {
+                return new BadRequestObjectResult(new  { Message = "Cannot confirm email, user is unavailable" });
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+
+            if (result.Succeeded) 
+            {
+                return Ok(new { Message = "Email is confirm" });
+            }
+
+
+            return new BadRequestObjectResult(new { Message = "Cannot confirm email" });
         }
 
         [HttpPost("login")]

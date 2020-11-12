@@ -73,5 +73,10 @@ D:\C#\TestWebApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.FileSystemGlobbing
 D:\C#\TestWebApi\bin\Debug\netcoreapp3.1\System.Text.Json.dll
 D:\C#\TestWebApi\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 D:\C#\TestWebApi\obj\Debug\netcoreapp3.1\TestWebApi.csprojAssemblyReference.cache
+D:\C#\TestWebApi\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Authentication.Facebook.dll
 D:\C#\TestWebApi\obj\Debug\netcoreapp3.1\TestWebApi.csproj.CoreCompileInputs.cache
 D:\C#\TestWebApi\obj\Debug\netcoreapp3.1\TestWebApi.MvcApplicationPartsAssemblyInfo.cache
+D:\C#\TestWebApi\bin\Debug\netcoreapp3.1\MailKit.dll
+D:\C#\TestWebApi\bin\Debug\netcoreapp3.1\MimeKit.dll
+D:\C#\TestWebApi\bin\Debug\netcoreapp3.1\NETCore.MailKit.dll
+D:\C#\TestWebApi\bin\Debug\netcoreapp3.1\BouncyCastle.Crypto.dll

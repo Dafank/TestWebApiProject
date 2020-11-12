@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using TestWebApi.Configuration;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using NETCore.MailKit.Infrastructure.Internal;
+using NETCore.MailKit.Extensions;
 
 namespace TestWebApi
 {
@@ -37,7 +39,12 @@ namespace TestWebApi
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<StudentUser, IdentityRole>()
-                .AddEntityFrameworkStores<StudentsIdentityDbContext>();
+                .AddEntityFrameworkStores<StudentsIdentityDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddMailKit(config => 
+            config.UseMailKit(Configuration.GetSection("Email").Get<MailKitOptions>()));
+            
 
             services.AddAuthentication()
                 .AddFacebook(option =>
